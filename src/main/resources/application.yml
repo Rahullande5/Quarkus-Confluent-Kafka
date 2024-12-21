@@ -1,0 +1,26 @@
+kafka:
+  bootstrap-servers: localhost:9092
+  sasl:
+    mechanism: PLAIN
+    jaas-config: org.apache.kafka.common.security.plain.PlainLoginModule required username="admin" password="admin-secret";
+  security:
+    protocol: SASL_PLAINTEXT
+
+mp.messaging:
+  incoming:
+    my-input-channel:
+      connector: smallrye-kafka
+      topic: test-topic
+      value.deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      sasl.jaas.config: ${kafka.sasl.jaas-config}
+      sasl.mechanism: ${kafka.sasl.mechanism}
+      security.protocol: ${kafka.security.protocol}
+
+  outgoing:
+    my-output-channel:
+      connector: smallrye-kafka
+      topic: test-topic
+      value.serializer: org.apache.kafka.common.serialization.StringSerializer
+      sasl.jaas.config: ${kafka.sasl.jaas-config}
+      sasl.mechanism: ${kafka.sasl.mechanism}
+      security.protocol: ${kafka.security.protocol}
