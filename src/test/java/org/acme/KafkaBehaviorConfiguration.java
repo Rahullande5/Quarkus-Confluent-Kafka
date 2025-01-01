@@ -11,7 +11,7 @@ import org.jbehave.core.steps.InjectableStepsFactory;
 import org.jbehave.core.steps.InstanceStepsFactory;
 
 @ApplicationScoped
-public class KafkaBehaviorConfiguration {
+public class KafkaBehaviorConfiguration extends Configuration{
 
     public Configuration createConfiguration() {
         return new MostUsefulConfiguration()

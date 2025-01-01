@@ -18,7 +18,7 @@ public class KafkaBehaviorSteps {
     private String message="Hello Kafka";
     private final BlockingQueue<String> receivedMessages = new LinkedBlockingQueue<>();
 
-    @Given("a message to send {string}")
+    @Given("a message to send ${msg}")
     public void givenAMessageToSend(String msg) {
         this.message = msg;
     }
