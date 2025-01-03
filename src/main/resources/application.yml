@@ -8,7 +8,7 @@ kafka:
 
 mp.messaging:
   incoming:
-    my-input-channel:
+    prices:
       connector: smallrye-kafka
       topic: test-topic
       value.deserializer: org.apache.kafka.common.serialization.StringDeserializer
@@ -17,7 +17,7 @@ mp.messaging:
       security.protocol: ${kafka.security.protocol}
 
   outgoing:
-    my-output-channel:
+    processed-prices:
       connector: smallrye-kafka
       topic: test-topic
       value.serializer: org.apache.kafka.common.serialization.StringSerializer

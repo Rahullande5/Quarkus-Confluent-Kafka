@@ -9,7 +9,7 @@ import org.eclipse.microprofile.reactive.messaging.Emitter;
 public class KafkaProducer {
 
     @Inject
-    @Channel("my-output-channel")
+    @Channel("processed-prices")
     Emitter<String> emitter;
 
     public void sendMessage(String message) {

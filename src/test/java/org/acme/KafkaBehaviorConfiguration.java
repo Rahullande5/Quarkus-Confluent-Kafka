@@ -1,7 +1,6 @@
 package org.acme;
 
 import jakarta.enterprise.context.ApplicationScoped;
-import jakarta.ws.rs.Produces;
 import org.jbehave.core.configuration.Configuration;
 import org.jbehave.core.configuration.MostUsefulConfiguration;
 import org.jbehave.core.io.LoadFromClasspath;
