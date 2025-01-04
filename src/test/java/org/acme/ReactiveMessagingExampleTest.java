@@ -1,4 +1,4 @@
-package smallrye;
+package org.acme;
 
 import io.quarkus.test.junit.QuarkusTest;
 import io.smallrye.reactive.messaging.memory.InMemoryConnector;
@@ -6,45 +6,99 @@ import io.smallrye.reactive.messaging.memory.InMemorySink;
 import io.smallrye.reactive.messaging.memory.InMemorySource;
 import jakarta.enterprise.inject.Any;
 import jakarta.inject.Inject;
-import org.eclipse.microprofile.reactive.messaging.Message;
-import org.junit.jupiter.api.AfterAll;
-import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
 @QuarkusTest
 public class ReactiveMessagingExampleTest {
-    // 1. Switch the channels to the in-memory connector:
-    @BeforeAll
-    public static void switchMyChannels() {
-        InMemoryConnector.switchIncomingChannelsToInMemory("prices");
-        InMemoryConnector.switchOutgoingChannelsToInMemory("processed-prices");
-    }
 
-    // 2. Don't forget to reset the channel after the tests:
-    @AfterAll
-    public static void revertMyChannels() {
-        InMemoryConnector.clear();
-    }
-
-    // 3. Inject the in-memory connector in your test,
-    // or use the bean manager to retrieve the instance
     @Inject
     @Any
     InMemoryConnector connector;
+    private InMemorySource<String> prices;
+    private InMemorySink<String> results;
+
+    @BeforeEach
+    public void setup() {
+        InMemoryConnector.switchIncomingChannelsToInMemory("prices");
+        InMemoryConnector.switchOutgoingChannelsToInMemory("processed-prices");
+        prices = connector.source("prices");
+        results = connector.sink("processed-prices");
+    }
+
+    @AfterEach
+    public void cleanup() {
+        results.clear();
+        InMemoryConnector.clear();
+    }
 
     @Test
-    void test() {
-        // 4. Retrieves the in-memory source to send message
-        InMemorySource<String> prices = connector.source("prices");
-        // 5. Retrieves the in-memory sink to check what is received
-        InMemorySink<String> results = connector.sink("processed-prices");
+    public void testSingleMessageProcessing() {
+        prices.send("TestMessage1");
 
-        InMemorySource<String> send = prices.send("Hello World");
-        assertThat(send).isNotNull();
+        waitForProcessing();
 
+        assertThat(results.received()).hasSize(1);
+        assertThat(results.received().get(0).getPayload()).isEqualTo("TestMessage1");
+    }
 
+    @Test
+    public void testMultipleMessagesProcessing() {
+
+        prices.send("Message1");
+        prices.send("Message2");
+        prices.send("Message3");
+
+        waitForProcessing();
+
+        assertThat(results.received()).hasSize(3);
+        assertThat(results.received().get(0).getPayload()).isEqualTo("Message1");
+        assertThat(results.received().get(1).getPayload()).isEqualTo("Message2");
+        assertThat(results.received().get(2).getPayload()).isEqualTo("Message3");
+    }
+
+    @Test
+    public void testNoMessageSent() {
+
+        waitForProcessing();
+
+        assertThat(results.received()).isEmpty();
+    }
+
+    @Test
+    public void testMessageWithSpecialCharacters() {
+
+        prices.send("Special!@#$%^&*()");
+
+        waitForProcessing();
+
+        assertThat(results.received()).hasSize(1);
+        assertThat(results.received().get(0).getPayload()).isEqualTo("Special!@#$%^&*()");
+    }
+
+    @Test
+    public void testMessageProcessingOrder() {
+
+        prices.send("FirstMessage");
+        prices.send("SecondMessage");
+        prices.send("ThirdMessage");
+
+        waitForProcessing();
+
+        assertThat(results.received()).hasSize(3);
+        assertThat(results.received().get(0).getPayload()).isEqualTo("FirstMessage");
+        assertThat(results.received().get(1).getPayload()).isEqualTo("SecondMessage");
+        assertThat(results.received().get(2).getPayload()).isEqualTo("ThirdMessage");
+    }
+
+    private void waitForProcessing() {
+        try {
+            Thread.sleep(500); // Allow time for message processing
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+        }
     }
 }

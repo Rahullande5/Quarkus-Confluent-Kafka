@@ -1,26 +1,18 @@
-kafka:
-  bootstrap-servers: localhost:9092
-  sasl:
-    mechanism: PLAIN
-    jaas-config: org.apache.kafka.common.security.plain.PlainLoginModule required username="admin" password="admin-secret";
-  security:
-    protocol: SASL_PLAINTEXT
+kafka.bootstrap-servers=localhost:9092
+kafka.sasl.mechanism=PLAIN
+kafka.sasl.jaas-config=org.apache.kafka.common.security.plain.PlainLoginModule required username="admin" password="admin-secret";
+kafka.security.protocol=SASL_PLAINTEXT
 
-mp.messaging:
-  incoming:
-    prices:
-      connector: smallrye-kafka
-      topic: test-topic
-      value.deserializer: org.apache.kafka.common.serialization.StringDeserializer
-      sasl.jaas.config: ${kafka.sasl.jaas-config}
-      sasl.mechanism: ${kafka.sasl.mechanism}
-      security.protocol: ${kafka.security.protocol}
+mp.messaging.incoming.prices.connector=smallrye-kafka
+mp.messaging.incoming.prices.topic=test-topic
+mp.messaging.incoming.prices.value.deserializer=org.apache.kafka.common.serialization.StringDeserializer
+mp.messaging.incoming.prices.sasl.jaas.config=${kafka.sasl.jaas-config}
+mp.messaging.incoming.prices.sasl.mechanism=${kafka.sasl.mechanism}
+mp.messaging.incoming.prices.security.protocol=${kafka.security.protocol}
 
-  outgoing:
-    processed-prices:
-      connector: smallrye-kafka
-      topic: test-topic
-      value.serializer: org.apache.kafka.common.serialization.StringSerializer
-      sasl.jaas.config: ${kafka.sasl.jaas-config}
-      sasl.mechanism: ${kafka.sasl.mechanism}
-      security.protocol: ${kafka.security.protocol}
+mp.messaging.outgoing.processed-prices.connector=smallrye-kafka
+mp.messaging.outgoing.processed-prices.topic=test-topic
+mp.messaging.outgoing.processed-prices.value.serializer=org.apache.kafka.common.serialization.StringSerializer
+mp.messaging.outgoing.processed-prices.sasl.jaas.config=${kafka.sasl.jaas-config}
+mp.messaging.outgoing.processed-prices.sasl.mechanism=${kafka.sasl.mechanism}
+mp.messaging.outgoing.processed-prices.security.protocol=${kafka.security.protocol}
