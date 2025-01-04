@@ -17,7 +17,7 @@ public class ReactiveMessagingExampleTest {
 
     @Inject
     @Any
-    InMemoryConnector connector;
+    InMemoryConnector inMemoryConnector;
     private InMemorySource<String> prices;
     private InMemorySink<String> results;
 
@@ -25,8 +25,8 @@ public class ReactiveMessagingExampleTest {
     public void setup() {
         InMemoryConnector.switchIncomingChannelsToInMemory("prices");
         InMemoryConnector.switchOutgoingChannelsToInMemory("processed-prices");
-        prices = connector.source("prices");
-        results = connector.sink("processed-prices");
+        prices = inMemoryConnector.source("prices");
+        results = inMemoryConnector.sink("processed-prices");
     }
 
     @AfterEach
