@@ -1,7 +1,6 @@
 package org.acme;
 
 import jakarta.enterprise.context.ApplicationScoped;
-import org.acme.XmlUnmarshaller;
 
 @ApplicationScoped
 public class XmlUnmarshallerFactory {
